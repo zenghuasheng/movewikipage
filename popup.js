@@ -4,14 +4,24 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('fetchDataButton').addEventListener('click', fetchDataAndRenderTree);
 
   // Add event listener to the move button
-  document.getElementById('moveButton').addEventListener('click', moveSelectedPage);
+  document.getElementById('moveButton').addEventListener('click', moveSelectedPages);
 
   // Add event listener to checkbox
   $(document).on('change', '.pageCheckbox', function() {
-    const selectedPageUUID = $(this).parent().data('uuid');
-    $('#selectedPage').val(selectedPageUUID);
-  });
+    const $selectedPagesTextarea = $('#selectedPages');
+    const $selectedPageUUIDsInput = $('#selectedPageUUIDs');
+    const pageUUID = $(this).parent().data('uuid');
+    const pageTitle = $(this).parent().text().trim();
 
+    // Update textarea with selected page titles
+    const currentText = $selectedPagesTextarea.val();
+    $selectedPagesTextarea.val(currentText + pageTitle + '\n');
+
+    // Update hidden input with selected page UUIDs
+    const currentUUIDs = $selectedPageUUIDsInput.val().split(',');
+    currentUUIDs.push(pageUUID);
+    $selectedPageUUIDsInput.val(currentUUIDs.join(','));
+  });
 });
 
 function fetchDataAndRenderTree() {
@@ -19,21 +29,22 @@ function fetchDataAndRenderTree() {
   if (spaceUUID) {
     const apiUrl = `https://our.ones.pro/wiki/api/wiki/team/RDjYMhKq/space/${spaceUUID}/pages`;
     fetch(apiUrl)
-      .then(response => response.json())
-      .then(data => {
-        const filteredPages = filterPagesByParentUUID(data.pages, "WRExTVFQ");
-        renderTree(filteredPages);
-      });
+        .then(response => response.json())
+        .then(data => {
+          // Filter pages based on parent_uuid
+          const filteredPages = filterPagesByParentUUID(data.pages, "WRExTVFQ");
+          renderTree(filteredPages);
+        });
   } else {
     console.error('Space UUID is required');
   }
 }
+
 function filterPagesByParentUUID(pages, parentUUID) {
   return pages.filter(page => page.parent_uuid === parentUUID);
 }
 
 function renderTree(pages) {
-  // Render the tree using jQuery or other preferred method
   const $tree = $('#tree');
   $tree.empty();
   renderTreeRecursive(pages, $tree);
@@ -52,32 +63,32 @@ function renderTreeRecursive(pages, $parent) {
   $ul.appendTo($parent);
 }
 
-
-function moveSelectedPage() {
+function moveSelectedPages() {
   const spaceUUID = $('#spaceUUID').val();
-  const selectedPageUUID = $('#selectedPage').val();
+  const selectedPageUUIDs = $('#selectedPageUUIDs').val().split(',');
   const targetParentPageUUID = $('#targetParentPage').val();
 
-  if (spaceUUID && selectedPageUUID && targetParentPageUUID) {
-    const apiUrl = `https://our.ones.pro/wiki/api/wiki/team/RDjYMhKq/space/${spaceUUID}/page/${selectedPageUUID}/update`;
-    const requestBody = {
-      space_uuid: spaceUUID,
-      parent_uuid: targetParentPageUUID,
-      version: 0
-    };
+  if (spaceUUID && selectedPageUUIDs.length > 0 && targetParentPageUUID) {
+    selectedPageUUIDs.forEach(selectedPageUUID => {
+      const apiUrl = `https://our.ones.pro/wiki/api/wiki/team/RDjYMhKq/space/${spaceUUID}/page/${selectedPageUUID}/update`;
+      const requestBody = {
+        space_uuid: spaceUUID,
+        parent_uuid: targetParentPageUUID,
+        version: 0
+      };
 
-    fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
-    })
-    .then(response => response.json())
-    .then(data => console.log('Page moved successfully', data))
-    .catch(error => console.error('Error moving page', error));
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      })
+          .then(response => response.json())
+          .then(data => console.log(`Page ${selectedPageUUID} moved successfully`, data))
+          .catch(error => console.error(`Error moving page ${selectedPageUUID}`, error));
+    });
   } else {
-    console.error('Space UUID, Selected Page UUID, and Target Parent Page UUID are required');
+    console.error('Space UUID, Selected Page UUIDs, and Target Parent Page UUID are required');
   }
 }
-

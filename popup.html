@@ -13,16 +13,16 @@
   <script src="jquery-3.6.4.min.js"></script>
 </head>
 <body>
-  <label for="spaceUUID">Space UUID:</label>
-  <input type="text" id="spaceUUID" placeholder="Enter Space UUID">
-  <button id="fetchDataButton">Fetch Data</button>
-  <div id="tree"></div>
-  <label for="selectedPage">Select Page to Move:</label>
-  <select id="selectedPage"></select>
-  <label for="targetParentPage">Select Target Parent Page:</label>
-  <input type="text" id="targetParentPage" placeholder="Enter Target Parent Page UUID">
-  <button id="moveButton">Move Selected Page</button>
-  <script src="popup.js"></script>
+<label for="spaceUUID">Space UUID:</label>
+<input type="text" id="spaceUUID" placeholder="Enter Space UUID" value="3n4tKghF">
+<button id="fetchDataButton">Fetch Data</button>
+<div id="tree"></div>
+<label for="selectedPages">Selected Pages:</label>
+<textarea id="selectedPages" rows="4" readonly></textarea>
+<input type="hidden" id="selectedPageUUIDs">
+<label for="targetParentPage">Target Parent Page UUID:</label>
+<input type="text" id="targetParentPage" placeholder="Enter Target Parent Page UUID" value="KUXrcbnz">
+<button id="moveButton">Move Selected Pages</button>
+<script src="popup.js"></script>
 </body>
 </html>
-
