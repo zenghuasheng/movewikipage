@@ -76,7 +76,8 @@ function moveSelectedPages() {
   if (spaceUUID && selectedPageUUIDs.length > 0 && targetParentPageUUID) {
     const successMessages = [];
 
-    selectedPageUUIDs.forEach(selectedPageUUID => {
+    // Create an array of fetch promises
+    const fetchPromises = selectedPageUUIDs.map(selectedPageUUID => {
       const apiUrl = `https://our.ones.pro/wiki/api/wiki/team/RDjYMhKq/space/${spaceUUID}/page/${selectedPageUUID}/update`;
       const requestBody = {
         space_uuid: spaceUUID,
@@ -84,7 +85,7 @@ function moveSelectedPages() {
         version: 0
       };
 
-      fetch(apiUrl, {
+      return fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -108,14 +109,18 @@ function moveSelectedPages() {
           });
     });
 
-    // Display notification after all pages are moved successfully
-    if (successMessages.length > 0) {
-      const notificationMessage = successMessages.join('\n');
-      showNotification('Pages Moved Successfully', notificationMessage);
+    // Wait for all fetch promises to resolve
+    Promise.all(fetchPromises)
+        .then(() => {
+          // Display notification after all pages are moved successfully
+          if (successMessages.length > 0) {
+            const notificationMessage = successMessages.join('\n');
+            showNotification('Pages Moved Successfully', notificationMessage);
 
-      // After moving pages, fetch and render the updated tree
-      fetchDataAndRenderTree();
-    }
+            // After moving pages, fetch and render the updated tree
+            fetchDataAndRenderTree();
+          }
+        });
   } else {
     console.error('Space UUID, Selected Page UUIDs, and Target Parent Page UUID are required');
   }
