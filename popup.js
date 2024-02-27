@@ -1,5 +1,24 @@
 // popup.js
 document.addEventListener('DOMContentLoaded', function() {
+  // Get the current tab's URL using chrome.tabs.query
+  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+    const currentUrl = tabs[0].url;
+
+    // Extract spaceUUID and parentPageUUID from the current URL using a regex
+    const match = currentUrl.match(/\/space\/([^/]+)\/page\/([^/]+)/);
+
+    // Check if the match is successful
+    if (match && match.length === 3) {
+      const spaceUUIDFromUrl = match[1];
+      const parentPageUUIDFromUrl = match[2];
+
+      // Set the extracted values to the respective input fields
+      $('#spaceUUID').val(spaceUUIDFromUrl);
+      $('#parentPageUUID').val(parentPageUUIDFromUrl);
+    } else {
+      console.error('URL does not match the expected pattern');
+    }
+  });
   // Add event listener to fetch data button
   document.getElementById('fetchDataButton').addEventListener('click', fetchDataAndRenderTree);
 
@@ -27,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function fetchDataAndRenderTree() {
   const spaceUUID = $('#spaceUUID').val();
   const parentPageUUID = $('#parentPageUUID').val();
+
   if (spaceUUID) {
     const apiUrl = `https://our.ones.pro/wiki/api/wiki/team/RDjYMhKq/space/${spaceUUID}/pages`;
 
@@ -46,7 +66,6 @@ function fetchDataAndRenderTree() {
     console.error('Space UUID is required');
   }
 }
-
 
 function filterPagesByParentUUID(pages, parentUUID) {
   return pages.filter(page => page.parent_uuid === parentUUID);
