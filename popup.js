@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function fetchDataAndRenderTree() {
   const spaceUUID = $('#spaceUUID').val();
-  const parentPageUUID = $('#parentPageUUID').val(); // Added line
+  const parentPageUUID = $('#parentPageUUID').val();
   if (spaceUUID) {
     const apiUrl = `https://our.ones.pro/wiki/api/wiki/team/RDjYMhKq/space/${spaceUUID}/pages`;
 
@@ -36,11 +36,17 @@ function fetchDataAndRenderTree() {
           // Filter pages based on parent_uuid if parentPageUUID is provided
           const filteredPages = parentPageUUID ? filterPagesByParentUUID(data.pages, parentPageUUID) : data.pages;
           renderTree(filteredPages);
+        })
+        .finally(() => {
+          // Clear selectedPageUUIDs and selectedPages after rendering tree
+          $('#selectedPageUUIDs').val('');
+          $('#selectedPages').val('');
         });
   } else {
     console.error('Space UUID is required');
   }
 }
+
 
 function filterPagesByParentUUID(pages, parentUUID) {
   return pages.filter(page => page.parent_uuid === parentUUID);
