@@ -1,10 +1,14 @@
-// manifest.json
 {
   "manifest_version": 2,
   "name": "Page Mover",
   "version": "1.0",
   "description": "Move pages in your wiki easily",
-  "permissions": ["activeTab", "storage", "https://our.ones.pro/"],
+  "permissions": [
+    "activeTab",
+    "storage",
+    "https://our.ones.pro/",
+    "notifications"
+  ],
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup": "popup.html"
@@ -22,4 +26,3 @@
     "jquery-3.6.4.min.js"
   ]
 }
-

@@ -65,10 +65,15 @@ function renderTreeRecursive(pages, $parent) {
 
 function moveSelectedPages() {
   const spaceUUID = $('#spaceUUID').val();
-  const selectedPageUUIDs = $('#selectedPageUUIDs').val().split(',');
+  let selectedPageUUIDs = $('#selectedPageUUIDs').val().split(',');
   const targetParentPageUUID = $('#targetParentPage').val();
 
+  // Filter out empty values from selectedPageUUIDs
+  selectedPageUUIDs = selectedPageUUIDs.filter(uuid => uuid.trim() !== '');
+
   if (spaceUUID && selectedPageUUIDs.length > 0 && targetParentPageUUID) {
+    const successMessages = [];
+
     selectedPageUUIDs.forEach(selectedPageUUID => {
       const apiUrl = `https://our.ones.pro/wiki/api/wiki/team/RDjYMhKq/space/${spaceUUID}/page/${selectedPageUUID}/update`;
       const requestBody = {
@@ -84,11 +89,46 @@ function moveSelectedPages() {
         },
         body: JSON.stringify(requestBody),
       })
-          .then(response => response.json())
-          .then(data => console.log(`Page ${selectedPageUUID} moved successfully`, data))
-          .catch(error => console.error(`Error moving page ${selectedPageUUID}`, error));
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              return response.text().then(errorText => Promise.reject(errorText));
+            }
+          })
+          .then(data => {
+            successMessages.push(`Page ${selectedPageUUID} moved successfully`);
+            console.log(successMessages);
+          })
+          .catch(error => {
+            console.error(`Error moving page ${selectedPageUUID}`, error);
+            showNotification('Error Moving Pages', `Error moving page ${selectedPageUUID}: ${error}`);
+          });
     });
+
+    if (successMessages.length > 0) {
+      const notificationMessage = successMessages.join('\n');
+      showNotification('Pages Moved Successfully', notificationMessage);
+    }
   } else {
     console.error('Space UUID, Selected Page UUIDs, and Target Parent Page UUID are required');
   }
 }
+
+
+function showNotification(title, message) {
+  // popup.js
+  if (chrome.notifications) {
+    console.log('Notifications are supported.');
+  } else {
+    console.error('Notifications are not supported.');
+    return;
+  }
+  chrome.notifications.create({
+    type: 'basic',
+    iconUrl: 'icon.png',
+    title: title,
+    message: message
+  });
+}
+
