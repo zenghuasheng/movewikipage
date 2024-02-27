@@ -1,0 +1,28 @@
+<!-- popup.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Page Mover</title>
+  <style>
+    body {
+      width: 300px;
+      height: 400px;
+      overflow-y: scroll;
+    }
+  </style>
+  <script src="jquery-3.6.4.min.js"></script>
+</head>
+<body>
+  <label for="spaceUUID">Space UUID:</label>
+  <input type="text" id="spaceUUID" placeholder="Enter Space UUID">
+  <button id="fetchDataButton">Fetch Data</button>
+  <div id="tree"></div>
+  <label for="selectedPage">Select Page to Move:</label>
+  <select id="selectedPage"></select>
+  <label for="targetParentPage">Select Target Parent Page:</label>
+  <input type="text" id="targetParentPage" placeholder="Enter Target Parent Page UUID">
+  <button id="moveButton">Move Selected Page</button>
+  <script src="popup.js"></script>
+</body>
+</html>
+
