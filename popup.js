@@ -26,13 +26,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function fetchDataAndRenderTree() {
   const spaceUUID = $('#spaceUUID').val();
+  const parentPageUUID = $('#parentPageUUID').val(); // Added line
   if (spaceUUID) {
     const apiUrl = `https://our.ones.pro/wiki/api/wiki/team/RDjYMhKq/space/${spaceUUID}/pages`;
+
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-          // Filter pages based on parent_uuid
-          const filteredPages = filterPagesByParentUUID(data.pages, "WRExTVFQ");
+          // Filter pages based on parent_uuid if parentPageUUID is provided
+          const filteredPages = parentPageUUID ? filterPagesByParentUUID(data.pages, parentPageUUID) : data.pages;
           renderTree(filteredPages);
         });
   } else {
@@ -106,9 +108,13 @@ function moveSelectedPages() {
           });
     });
 
+    // Display notification after all pages are moved successfully
     if (successMessages.length > 0) {
       const notificationMessage = successMessages.join('\n');
       showNotification('Pages Moved Successfully', notificationMessage);
+
+      // After moving pages, fetch and render the updated tree
+      fetchDataAndRenderTree();
     }
   } else {
     console.error('Space UUID, Selected Page UUIDs, and Target Parent Page UUID are required');
