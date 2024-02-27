@@ -32,14 +32,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const pageUUID = $(this).parent().data('uuid');
     const pageTitle = $(this).parent().text().trim();
 
-    // Update textarea with selected page titles
-    const currentText = $selectedPagesTextarea.val();
-    $selectedPagesTextarea.val(currentText + pageTitle + '\n');
+    // If checkbox is checked, add the page to the selectedPages
+    if ($(this).is(':checked')) {
+      // Update textarea with selected page titles
+      const currentText = $selectedPagesTextarea.val();
+      $selectedPagesTextarea.val(currentText + pageTitle + '\n');
 
-    // Update hidden input with selected page UUIDs
-    const currentUUIDs = $selectedPageUUIDsInput.val().split(',');
-    currentUUIDs.push(pageUUID);
-    $selectedPageUUIDsInput.val(currentUUIDs.join(','));
+      // Update hidden input with selected page UUIDs
+      const currentUUIDs = $selectedPageUUIDsInput.val().split(',');
+      currentUUIDs.push(pageUUID);
+      $selectedPageUUIDsInput.val(currentUUIDs.join(','));
+    } else {
+      // If checkbox is unchecked, remove the page from selectedPages
+      const currentText = $selectedPagesTextarea.val();
+      const newText = currentText.replace(pageTitle + '\n', '');
+      $selectedPagesTextarea.val(newText);
+
+      // Update hidden input by removing the page UUID
+      const currentUUIDs = $selectedPageUUIDsInput.val().split(',');
+      const newUUIDs = currentUUIDs.filter(uuid => uuid !== pageUUID);
+      $selectedPageUUIDsInput.val(newUUIDs.join(','));
+    }
   });
 });
 

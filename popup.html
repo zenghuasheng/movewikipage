@@ -20,8 +20,14 @@
       margin-bottom: 5px;
     }
 
-    input,
-    textarea {
+    /* Add a more specific selector for input inside li */
+    body li input {
+      width: auto;
+    }
+
+    /* Other existing styles */
+    body input,
+    body textarea {
       width: 100%;
       padding: 5px;
       box-sizing: border-box;
@@ -34,18 +40,18 @@
   <script src="jquery-3.6.4.min.js"></script>
 </head>
 <body>
-<div class="input-container">
-  <label for="spaceUUID">Space UUID:</label>
-  <input type="text" id="spaceUUID" placeholder="Enter Space UUID">
-</div>
+<!--<div class="input-container">-->
+<!--  <label for="spaceUUID">Space UUID:</label>-->
+  <input type="hidden" id="spaceUUID" placeholder="Enter Space UUID">
+<!--</div>-->
+
+<!--<div class="input-container">-->
+<!--  <label for="parentPageUUID">Parent Page UUID:</label>-->
+  <input type="hidden" id="parentPageUUID" placeholder="Enter Parent Page UUID">
+<!--</div>-->
 
 <div class="input-container">
-  <label for="parentPageUUID">Parent Page UUID:</label>
-  <input type="text" id="parentPageUUID" placeholder="Enter Parent Page UUID">
-</div>
-
-<div class="input-container">
-  <button id="fetchDataButton">Fetch Data</button>
+  <button id="fetchDataButton">点击获取当前页面的子页面</button>
 </div>
 
 <div class="input-container">
@@ -53,7 +59,7 @@
 </div>
 
 <div class="input-container">
-  <label for="selectedPages">Selected Pages:</label>
+  <label for="selectedPages">选中的要移动的页面：</label>
   <textarea id="selectedPages" rows="4" readonly></textarea>
 </div>
 
@@ -67,7 +73,7 @@
 </div>
 
 <div class="input-container">
-  <button id="moveButton">Move Selected Pages</button>
+  <button id="moveButton">移动</button>
 </div>
 
 <script src="popup.js"></script>
